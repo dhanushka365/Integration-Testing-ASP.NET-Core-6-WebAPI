@@ -1,4 +1,5 @@
 ﻿using Integration_Testing_ASP.NET_Core_6_WebAPI.Data;
+using Integration_Testing_ASP.NET_Core_6_WebAPI.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,39 +10,39 @@ namespace Integration_Testing_ASP.NET_Core_6_WebAPI.Controllers
     [ApiController]
     public class TodoController : ControllerBase
     {
-        private readonly AppDbContext _context;
 
-        public TodoController(AppDbContext context)
+        private readonly ITodoRepository _todoRepository;
+
+        public TodoController(ITodoRepository todoRepository)
         {
-            _context = context;
+            _todoRepository = todoRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
         {
-            return await _context.TodoItems.ToListAsync();
+            var todoItems = await _todoRepository.GetTodoItemsAsync();
+            return Ok(todoItems);
         }
 
-        [HttpGet("title/{id}")]
-        public async Task<ActionResult<string>> GetTodoItemTitleById(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TodoItem>> GetTodoItem(int id)
         {
-            var todoItem = await _context.TodoItems.FindAsync(id);
+            var todoItem = await _todoRepository.GetTodoItemAsync(id);
 
             if (todoItem == null)
             {
-                return NotFound();
+                return NotFound(); // Return a 404 response if the item is not found.
             }
 
-            return todoItem.Title;
+            return Ok(todoItem);
         }
 
         [HttpPost]
         public async Task<ActionResult<TodoItem>> CreateTodoItem(TodoItem todoItem)
         {
-            _context.TodoItems.Add(todoItem);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetTodoItems), new { id = todoItem.Id }, todoItem);
+            var createdTodoItem = await _todoRepository.AddTodoItemAsync(todoItem);
+            return CreatedAtAction(nameof(GetTodoItem), new { id = createdTodoItem.Id }, createdTodoItem);
         }
 
         [HttpPut("{id}")]
@@ -49,44 +50,30 @@ namespace Integration_Testing_ASP.NET_Core_6_WebAPI.Controllers
         {
             if (id != todoItem.Id)
             {
-                return BadRequest();
+                return BadRequest(); // Return a 400 Bad Request response if the IDs do not match.
             }
 
-            _context.Entry(todoItem).State = EntityState.Modified;
+            var updatedTodoItem = await _todoRepository.UpdateTodoItemAsync(todoItem);
 
-            try
+            if (updatedTodoItem == null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.TodoItems.Any(t => t.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound(); // Return a 404 response if the item is not found.
             }
 
-            return NoContent();
+            return NoContent(); // Return a 204 No Content response on success.
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTodoItem(int id)
+        public async Task<ActionResult<TodoItem>> DeleteTodoItem(int id)
         {
-            var todoItem = await _context.TodoItems.FindAsync(id);
+            var deletedTodoItem = await _todoRepository.DeleteTodoItemAsync(id);
 
-            if (todoItem == null)
+            if (deletedTodoItem == null)
             {
-                return Ok("Item not found");
+                return NotFound(); // Return a 404 response if the item is not found.
             }
 
-            _context.TodoItems.Remove(todoItem);
-            await _context.SaveChangesAsync();
-
-            return Ok(todoItem);
+            return Ok(deletedTodoItem); // Return the deleted item in the response.
         }
     }
 }
