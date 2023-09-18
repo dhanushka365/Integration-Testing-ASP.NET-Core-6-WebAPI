@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration Testing ASP.NET Core 6 WebAPI", "Integration Testing ASP.NET Core 6 WebAPI\Integration Testing ASP.NET Core 6 WebAPI.csproj", "{5D6706C2-0083-44A1-9A6C-75AE56CE0316}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalAPITest.Test", "MinimalAPITest\MinimalAPITest.Test.csproj", "{793BA176-AEAC-499A-886E-18147168409F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5D6706C2-0083-44A1-9A6C-75AE56CE0316}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D6706C2-0083-44A1-9A6C-75AE56CE0316}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D6706C2-0083-44A1-9A6C-75AE56CE0316}.Release|Any CPU.Build.0 = Release|Any CPU
+		{793BA176-AEAC-499A-886E-18147168409F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{793BA176-AEAC-499A-886E-18147168409F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{793BA176-AEAC-499A-886E-18147168409F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{793BA176-AEAC-499A-886E-18147168409F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
